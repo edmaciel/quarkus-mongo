@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.lang.String.format;
 
 @Path("/user")
 public class UserResource {
@@ -53,9 +56,11 @@ public class UserResource {
     @GET
     @Path("/import")
     @Produces(MediaType.APPLICATION_JSON)
+    @Singleton
     public Response importFromFiles() {
 
         Function<String, User> mapToUser = getUserForLineFile();
+        LOGGER.info(format("user %s", mapToUser));
 
         try (Stream<java.nio.file.Path> paths = Files.walk(Paths.get(directory))) {
             paths.filter(Files::isRegularFile)
@@ -90,7 +95,7 @@ public class UserResource {
                 try {
                     user.setUpdateDate(new SimpleDateFormat("dd/MM/yyyy").parse(userLine.get(2)));
                 } catch (ParseException e) {
-                    LOGGER.error(String.format("Error to convert file date %s to user.updateDate", userLine.get(2)));
+                    LOGGER.error(format("Error to convert file date %s to user.updateDate", userLine.get(2)));
                 }
                 return user;
             };

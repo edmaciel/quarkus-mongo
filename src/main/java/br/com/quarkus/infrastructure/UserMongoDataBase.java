@@ -23,7 +23,7 @@ public class UserMongoDataBase implements UserRepository {
     String dataBase;
 
     @Inject
-    private MongoClient mongoClient;
+    MongoClient mongoClient;
 
     public UserMongoDataBase(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
